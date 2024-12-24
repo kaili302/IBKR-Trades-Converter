@@ -166,7 +166,7 @@ def convert(ibkrTrade : Trade) -> CgtCalculatorTrade:
         side = ibkrTrade.side(),
         date = ibkrTrade.tradeDate,
         company= ibkrTrade.symbol,
-        shares= int(abs(ibkrTrade.quantity)),
+        shares= abs(ibkrTrade.quantity),
         price = ibkrTrade.tradePriceInBaseCurrency(),
         charges= ibkrTrade.ibCommissionInBaseCurrency()
     )
@@ -187,14 +187,13 @@ def process_xml_files(folder_path="data"):
                 print(f"An unexpected error occurred processing {filename}: {e}")
     return parsed_data_list
 
-
 def get_trades_from_xmls() -> List[CgtCalculatorTrade]:
     trades = []
     parsed_data = process_xml_files("data")
     for data in parsed_data:
         for statement in data.flexStatements.flexStatement:
             for txn in statement.trades.trade:
-                if txn.assetCategory == "CASH":
+                if txn.assetCategory in ("CASH", "OPT"):
                     continue
                 trades.append(convert(txn))
     return trades
@@ -211,7 +210,7 @@ def save_cgt_trades_to_csv(trades: List[CgtCalculatorTrade], filename: str):
 
     try:
         with open(filename, 'w', newline='', encoding='utf-8') as csvfile:
-            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames, delimiter=" ")
             writer.writeheader()
             for trade in trades:
                 writer.writerow(asdict(trade))
