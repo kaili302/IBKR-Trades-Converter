@@ -156,7 +156,7 @@ class CgtCalculatorTrade:
     side: str
     date: str
     company: str
-    shares: float
+    shares: int
     price: float
     charges: float
     tax: int = 0
@@ -166,7 +166,7 @@ def convert(ibkrTrade : Trade) -> CgtCalculatorTrade:
         side = ibkrTrade.side(),
         date = ibkrTrade.tradeDate,
         company= ibkrTrade.symbol,
-        shares= abs(ibkrTrade.quantity),
+        shares= int(abs(ibkrTrade.quantity)),
         price = ibkrTrade.tradePriceInBaseCurrency(),
         charges= ibkrTrade.ibCommissionInBaseCurrency()
     )
