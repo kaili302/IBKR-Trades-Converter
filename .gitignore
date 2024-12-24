@@ -1,0 +1,3 @@
+data/*.xml
+*.csv
+*.DS_Store
